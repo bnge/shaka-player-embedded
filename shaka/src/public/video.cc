@@ -131,6 +131,30 @@ void Video::Pause() {
   impl_->CallInnerMethod(&JSVideo::Pause);
 }
 
+void Video::OnPlayingEvent(std::function<void()> callback) {
+  auto task = PlainCallbackTask([=]() {
+      impl_->inner->SetCppEventListener(js::EventType::Playing, callback);
+  });
+
+  const std::string task_name = "Video SetOnPlayingEventCallback";
+  JsManagerImpl::Instance()
+          ->MainThread()
+          ->AddInternalTask(TaskPriority::Internal, task_name, task)
+          ->GetValue();
+}
+
+void Video::OnEndedEvent(std::function<void()> callback) {
+  auto task = PlainCallbackTask([=]() {
+      impl_->inner->SetCppEventListener(js::EventType::Ended, callback);
+  });
+
+  const std::string task_name = "Video SetOnEndedEventCallback";
+  JsManagerImpl::Instance()
+          ->MainThread()
+          ->AddInternalTask(TaskPriority::Internal, task_name, task)
+          ->GetValue();
+}
+
 js::mse::HTMLVideoElement* Video::GetJavaScriptObject() {
   DCHECK(impl_->inner) << "Must call Initialize.";
   return impl_->inner;

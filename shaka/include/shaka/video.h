@@ -134,6 +134,12 @@ class SHAKA_EXPORT Video final {
   /** Plays the video. */
   void Play();
 
+  /** Attach callback to 'playing' event. */
+  void OnPlayingEvent(std::function<void()> callback);
+
+  /** Attach callback to 'ended' event */
+  void OnEndedEvent(std::function<void()> callback);
+
  private:
   friend class Player;
   js::mse::HTMLVideoElement* GetJavaScriptObject();
